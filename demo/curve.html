@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <script src="./index.js"></script>
-    <script src="./fly.js"></script>
-    <script src="./three98.js"></script>
-    <script src="./stats.min.js"></script>
-    <script src="./OrbitControls.js"></script>
+    <script src="../libs/index.js"></script>
+    <script src="../libs/fly.js"></script>
+    <script src="../libs/three98.js"></script>
+    <script src="../libs/stats.min.js"></script>
+    <script src="../libs/OrbitControls.js"></script>
     <style>
         #app {
             position: absolute;
@@ -31,12 +31,13 @@
             id: "#app",
             animation: function (dalte) {
                 if (_Fly) {
+                    // 更新线 必须
                     _Fly.animation(dalte);
                 }
             },
             load({ scene, camera }) {
-                _Fly = new initFly({
-                    texture: "./meshline.png"
+                _Fly = new InitFly({
+                    texture: "../images/point.png"
                 });
                 let index = 0; 
                 var time = setInterval(() => {

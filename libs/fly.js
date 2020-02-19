@@ -1,11 +1,15 @@
-class initFly {
-    constructor({ texture } = opt) {
-        this.flyId = 0;//id
-        this.flyArr = [];//存储所有飞线
-        this.baicSpeed = 1;//基础速度
+class InitFly {
+    constructor({
+        texture
+    } = opt) {
+        this.flyId = 0; //id
+        this.flyArr = []; //存储所有飞线
+        this.baicSpeed = 1; //基础速度
         this.texture = 0.0;
-        if (texture) {
+        if (!texture.isTexture) {
             this.texture = new THREE.TextureLoader().load(texture)
+        } else {
+            this.texture = texture;
         }
         this.flyShader = {
             vertexshader: ` 
@@ -20,7 +24,7 @@ class initFly {
                         u_opacitys = u_scale;
                         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
                         gl_Position = projectionMatrix * mvPosition;
-                        gl_PointSize = size * u_scale * 300.0 / (-mvPosition.z);
+                        gl_PointSize = size * u_scale * 300.0 / (-mvPosition.z);;
                     } 
                 }
                 `,
@@ -51,25 +55,56 @@ class initFly {
      * @param   {Number}  opt.repeat [重复次数]
      * @return  {Mesh}               [return 图层]
      */
-    addFly({ color = "rgba(255,0,0,1)", curve = [], width = 1, length = 10, speed = 1, repeat = 1 } = opt) {
+    addFly({
+        color = "rgba(255,0,0,1)",
+        curve = [],
+        width = 1,
+        length = 10,
+        speed = 1,
+        repeat = 1
+    } = opt) {
         let colorArr = this.getColorArr(color);
         let geometry = new THREE.BufferGeometry();
         let material = new THREE.ShaderMaterial({
             uniforms: {
-                color: { value: colorArr[0], type: "v3" },
-                size: { value: width, type: "f" },
-                texture: { value: this.texture, type: "t2" },
-                u_len: { value: length, type: "f" },
-                u_opacity: { value: colorArr[1], type: "f" },
-                time: { value: -length, type: "f" },
-                isTexture: { value: this.texture, type: "f" }
+                color: {
+                    value: colorArr[0],
+                    type: "v3"
+                },
+                size: {
+                    value: width,
+                    type: "f"
+                },
+                texture: {
+                    value: this.texture,
+                    type: "t2"
+                },
+                u_len: {
+                    value: length,
+                    type: "f"
+                },
+                u_opacity: {
+                    value: colorArr[1],
+                    type: "f"
+                },
+                time: {
+                    value: -length,
+                    type: "f"
+                },
+                isTexture: {
+                    value: this.texture,
+                    type: "f"
+                }
             },
             transparent: true,
             depthTest: false,
             vertexShader: this.flyShader.vertexshader,
             fragmentShader: this.flyShader.fragmentshader
         });
-        const [position, u_index] = [[], []];
+        const [position, u_index] = [
+            [],
+            []
+        ];
         curve.forEach(function (elem, index) {
             position.push(elem.x, elem.y, elem.z);
             u_index.push(index);
@@ -88,6 +123,26 @@ class initFly {
         return mesh
     }
     /**
+     * 根据线条组生成路径
+     * @param {*} arr 需要生成的线条组
+     * @param {*} dpi 密度
+     */
+    tranformPath(arr, dpi = 1) {
+        const vecs = [];
+        for (let i = 1; i < arr.length; i++) {
+            let src = arr[i - 1];
+            let dst = arr[i];
+            let s = new THREE.Vector3(src.x, src.y, src.z);
+            let d = new THREE.Vector3(dst.x, dst.y, dst.z);
+            let length = s.distanceTo(d) * dpi;
+            let len = parseInt(length);
+            for (let i = 0; i <= len; i++) {
+                vecs.push(s.clone().lerp(d, i / len))
+            }
+        }
+        return vecs;
+    }
+    /**
      * [remove 删除]
      * @param   {Object}  mesh  [当前飞线]
      */
@@ -103,6 +158,7 @@ class initFly {
      * @param   {Number}  delta  [执行动画间隔时间] 
      */
     animation(delta = 0.015) {
+        if (delta > 0.2) return;
         this.flyArr.forEach(elem => {
             if (elem._been >= elem._repeat) {
                 elem.visible = false;
@@ -143,6 +199,7 @@ class initFly {
             _arr[0] = this.color(str);
             _arr[1] = 1;
         }
+
         function pad2(c) {
             return c.length == 1 ? '0' + c : '' + c;
         }

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../libs/index.js"></script>
+    <script src="../libs/fly.js"></script>
+    <script src="../libs/three98.js"></script>
+    <script src="../libs/stats.min.js"></script>
+    <script src="../libs/OrbitControls.js"></script>
+    <style>
+        #app {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script>
+        var _Fly;
+        var GL = new Initialize({
+            id: "#app",
+            animation: function (dalte) {
+                if (_Fly) {
+                    // 更新线 必须
+                    _Fly.animation(dalte);
+                }
+            },
+            load({
+                scene,
+                camera
+            }) {
+                _Fly = new InitFly({
+                    texture: "../images/point.png"
+                });
+                let index = 0;
+                var time = setInterval(() => {
+                    if (index >= 1000) {
+                        clearInterval(time)
+                    }
+                    var x = THREE.Math.randFloat(-200, 200);
+                    var y = THREE.Math.randFloat(-200, 200);
+                    var z = THREE.Math.randFloat(-200, 200);
+                    var src = new THREE.Vector3(x, y, z);
+                    var points = _Fly.tranformPath(
+                        [
+                            new THREE.Vector3(0, 0, 0),
+                            src
+                        ],
+                        1
+                    );
+                    var flyMesh = _Fly.addFly({
+                        color: `rgba(255,${THREE.Math.randInt(0, 255)},${THREE.Math.randInt(0, 255)},1)`,
+                        curve: points,
+                        width: 9,
+                        length: 100,
+                        speed: 1,
+                        repeat: Infinity
+                    })
+                    scene.add(flyMesh);
+                    index++;
+                }, 40)
+            }
+        })
+    </script>
+</body>
+
+</html>

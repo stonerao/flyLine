@@ -24,6 +24,18 @@ _Fly.remove(flyMesh); //手动删除
 #### 注意 
 需要在 requestAnimationFrame 中 执行 _Fly.animation(delta);
 
+### 生成路径
+```
+var points = _Fly.tranformPath(
+    [
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(100, 100, 100)
+    ],
+    1
+);
+```
+
+
 #### 例子
 ```javascript
 var time = setInterval(() => {
@@ -32,6 +44,7 @@ var time = setInterval(() => {
     }
     var x = 0;
     var z = 0;
+    
     var x1 = THREE.Math.randFloat(-200, 200);
     var z1 = THREE.Math.randFloat(-200, 200);
     var curve = new THREE.QuadraticBezierCurve3(
