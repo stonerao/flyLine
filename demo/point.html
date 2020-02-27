@@ -43,32 +43,33 @@
                     texture: "../images/point.png"
                 });
                 let index = 0;
-                var time = setInterval(() => {
+                const time = setInterval(() => {
                     if (index >= 5000) {
                         clearInterval(time)
                     }
-                    var x = THREE.Math.randFloat(-200, 200);
-                    var y = THREE.Math.randFloat(-200, 200);
-                    var z = THREE.Math.randFloat(-200, 200);
-                    var src = new THREE.Vector3(x, y, z);
-                    var points = _Fly.tranformPath(
+                    const num = 500;
+                    const x = THREE.Math.randFloat(-num, num);
+                    const y = THREE.Math.randFloat(-num, num);
+                    const z = THREE.Math.randFloat(-num, num);
+                    const src = new THREE.Vector3(x, y, z);
+                    const points = _Fly.tranformPath(
                         [
                             new THREE.Vector3(0, 0, 0),
                             src
                         ],
-                        1
+                        0.1
                     );
-                    var flyMesh = _Fly.addFly({
+                    const flyMesh = _Fly.addFly({
                         color: `rgba(255,${THREE.Math.randInt(0, 255)},${THREE.Math.randInt(0, 255)},1)`,
                         curve: points,
-                        width: 9,
+                        width: 20,
                         length: 100,
                         speed: 1,
                         repeat: Infinity
                     })
                     scene.add(flyMesh);
                     index++;
-                }, 30)
+                })
             }
         })
     </script>

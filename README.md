@@ -1,4 +1,8 @@
 ## 绘制飞线
+* [曲线](https://stonerao.github.io/flyLine/demo/curve.html)
+* [实线](https://stonerao.github.io/flyLine/demo/straight.html)
+* [光点](https://stonerao.github.io/flyLine/demo/point.html)
+
 ### 使用飞线
 ```javascript
 let _Fly = new initFly({
@@ -65,3 +69,5 @@ var time = setInterval(() => {
     index++;
 }) 
 ```
+
+* 联系qq 674656681

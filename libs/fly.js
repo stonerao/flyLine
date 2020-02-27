@@ -24,7 +24,7 @@ class InitFly {
                         u_opacitys = u_scale;
                         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
                         gl_Position = projectionMatrix * mvPosition;
-                        gl_PointSize = size * u_scale * 300.0 / (-mvPosition.z);;
+                        gl_PointSize = size * u_scale * 300.0 / (-mvPosition.z);
                     } 
                 }
                 `,
