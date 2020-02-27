@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../data/index.js"></script>
+    <script src="../libs/index.js"></script>
+    <script src="../libs/fly.js"></script>
+    <script src="../libs/three98.js"></script>
+    <script src="../libs/stats.min.js"></script>
+    <script src="../libs/OrbitControls.js"></script>
+    <style>
+        #app {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script>
+        var _Fly;
+        var GL = new Initialize({
+            id: "#app",
+            animation: function (dalte) {
+                if (_Fly) {
+                    // 更新线 必须
+                    _Fly.animation(dalte);
+                }
+            },
+            load({
+                scene,
+                camera
+            }) {
+                _Fly = new InitFly({
+                    // texture:new THREE.TextureLoader().load('../images/2-1-1.png')
+                });
+                const {
+                    links
+                } = topoJson;
+                const textures = [
+                    new THREE.TextureLoader().load('../images/2-1-1.png'),
+                    new THREE.TextureLoader().load('../images/2-2-4.png'),
+                    new THREE.TextureLoader().load('../images/2-3-1.png')
+                ]
+                const arr = [];
+                links.forEach((elem, index) => {
+                    const src = new THREE.Vector3(~elem.src.x, ~elem.src.y, ~elem.src.z);
+                    const dst = new THREE.Vector3(~elem.dst.x, ~elem.dst.y, ~elem.dst.z);
+                    const points = _Fly.tranformPath([src, dst], 0.05);
+                    arr.push(points);
+                });
+                var index = 0;
+
+                function fly() {
+                    if (index >= arr.length) {
+                        index = 0;
+                    }
+                    var flyMesh = _Fly.addFly({
+                        color: `rgba(255,255,255,1)`,
+                        curve: arr[index],
+                        width: 50,
+                        length: 100,
+                        speed: 0.3,
+                        repeat: 1,
+                        texture: textures[index % textures.length],
+                        callback: function (state) {
+                            console.log('当前结束回调');
+                        }
+                    });
+                    scene.add(flyMesh);
+                    
+                    index++;
+                    setTimeout(() => {
+                        fly();
+                    },500)
+                }
+                fly()
+            }
+        })
+    </script>
+</body>
+
+</html>

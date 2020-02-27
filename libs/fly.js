@@ -6,7 +6,7 @@ class InitFly {
         this.flyArr = []; //存储所有飞线
         this.baicSpeed = 1; //基础速度
         this.texture = 0.0;
-        if (!texture.isTexture) {
+        if (texture && !texture.isTexture) {
             this.texture = new THREE.TextureLoader().load(texture)
         } else {
             this.texture = texture;
@@ -56,16 +56,18 @@ class InitFly {
      * @return  {Mesh}               [return 图层]
      */
     addFly({
-        color = "rgba(255,0,0,1)",
+        color = "rgba(255,255,255,1)",
         curve = [],
         width = 1,
         length = 10,
         speed = 1,
-        repeat = 1
+        repeat = 1,
+        texture = null,
+        callback
     } = opt) {
         let colorArr = this.getColorArr(color);
         let geometry = new THREE.BufferGeometry();
-        let material = new THREE.ShaderMaterial({
+        let material = new THREE.ShaderMaterial({   
             uniforms: {
                 color: {
                     value: colorArr[0],
@@ -76,7 +78,7 @@ class InitFly {
                     type: "f"
                 },
                 texture: {
-                    value: this.texture,
+                    value: texture ? texture : this.texture,
                     type: "t2"
                 },
                 u_len: {
@@ -92,7 +94,7 @@ class InitFly {
                     type: "f"
                 },
                 isTexture: {
-                    value: this.texture,
+                    value: 1.0,
                     type: "f"
                 }
             },
@@ -118,6 +120,7 @@ class InitFly {
         mesh._repeat = repeat;
         mesh._been = 0;
         mesh._total = curve.length;
+        mesh._callback = callback;
         this.flyId++;
         this.flyArr.push(mesh);
         return mesh
@@ -160,8 +163,12 @@ class InitFly {
     animation(delta = 0.015) {
         if (delta > 0.2) return;
         this.flyArr.forEach(elem => {
-            if (elem._been >= elem._repeat) {
+            if (!elem.parent) return;
+            if (elem._been > elem._repeat) {
                 elem.visible = false;
+                if (typeof elem._callback === 'function') {
+                    elem._callback(elem);
+                }
                 this.remove(elem)
             } else {
                 let uniforms = elem.material.uniforms;

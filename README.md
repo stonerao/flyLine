@@ -2,6 +2,7 @@
 * [曲线](https://stonerao.github.io/flyLine/demo/curve.html)
 * [实线](https://stonerao.github.io/flyLine/demo/straight.html)
 * [光点](https://stonerao.github.io/flyLine/demo/point.html)
+* [贴图](https://stonerao.github.io/flyLine/demo/texture.html)
 
 ### 使用飞线
 ```javascript
