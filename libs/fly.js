@@ -29,7 +29,7 @@ class InitFly {
                 }
                 `,
             fragmentshader: ` 
-                uniform sampler2D texture;
+                uniform sampler2D u_map;
                 uniform float u_opacity;
                 uniform vec3 color;
                 uniform float isTexture;
@@ -37,7 +37,7 @@ class InitFly {
                 void main() {
                     vec4 u_color = vec4(color,u_opacity * u_opacitys);
                     if( isTexture != 0.0 ){
-                        gl_FragColor = u_color * texture2D(texture, vec2(gl_PointCoord.x, 1.0 - gl_PointCoord.y));
+                        gl_FragColor = u_color * texture2D(u_map, vec2(gl_PointCoord.x, 1.0 - gl_PointCoord.y));
                     }else{
                         gl_FragColor = u_color;
                     }
@@ -77,7 +77,7 @@ class InitFly {
                     value: width,
                     type: "f"
                 },
-                texture: {
+                u_map: {
                     value: texture ? texture : this.texture,
                     type: "t2"
                 },
@@ -111,8 +111,8 @@ class InitFly {
             position.push(elem.x, elem.y, elem.z);
             u_index.push(index);
         })
-        geometry.addAttribute("position", new THREE.Float32BufferAttribute(position, 3));
-        geometry.addAttribute("u_index", new THREE.Float32BufferAttribute(u_index, 1));
+        geometry.setAttribute("position", new THREE.Float32BufferAttribute(position, 3));
+        geometry.setAttribute("u_index", new THREE.Float32BufferAttribute(u_index, 1));
         let mesh = new THREE.Points(geometry, material);
         mesh.name = "fly";
         mesh._flyId = this.flyId;
